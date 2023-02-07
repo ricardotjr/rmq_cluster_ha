@@ -1,0 +1,71 @@
+version: '3'
+services:
+  node1:
+    image: rabbitmq:3-management
+    container_name: rabbitNode1
+    hostname: node1.rabbit
+    ports:
+      - 15672:15672
+    environment:
+      - "RABBITMQ_USE_LONGNAME=true"
+      - "RABBITMQ_ERLANG_COOKIE=AAV/BmDdoOrvkjgRyks1Cg=="
+      - "RABBITMQ_DEFAULT_USER=root"
+      - "RABBITMQ_DEFAULT_PASS=123456"
+    networks:
+      - cluster-network
+    volumes:
+      - rabbitNode1:/var/lib/rabbitmq
+  
+  node2:
+    image: rabbitmq:3-management
+    container_name: rabbitNode2
+    hostname: node2.rabbit
+    ports:
+      - 15673:15672
+    environment:
+      - "RABBITMQ_USE_LONGNAME=true"
+      - "RABBITMQ_ERLANG_COOKIE=AAV/BmDdoOrvkjgRyks1Cg=="
+      - "RABBITMQ_DEFAULT_USER=root"
+      - "RABBITMQ_DEFAULT_PASS=123456"
+    networks:
+      - cluster-network
+    volumes:
+      - rabbitNode2:/var/lib/rabbitmq
+
+  node3:
+    image: rabbitmq:3-management
+    container_name: rabbitNode3
+    hostname: node3.rabbit
+    ports:
+      - 15674:15672
+    environment:
+      - "RABBITMQ_USE_LONGNAME=true"
+      - "RABBITMQ_ERLANG_COOKIE=AAV/BmDdoOrvkjgRyks1Cg=="
+      - "RABBITMQ_DEFAULT_USER=root"
+      - "RABBITMQ_DEFAULT_PASS=123456"
+    networks:
+      - cluster-network
+    volumes:
+      - rabbitNode3:/var/lib/rabbitmq
+
+  haproxy:
+    image: haproxy:2.7.2-alpine
+    container_name: haproxy
+    hostname: haproxy
+    ports:
+      - 5672:5672
+      - 1936:1936
+    networks: 
+      - cluster-network
+    volumes:
+      - $PWD/rabbitmq.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+networks:
+  cluster-network:
+    driver: bridge
+    attachable: true
+
+volumes:
+  rabbitNode1:
+  rabbitNode2:
+  rabbitNode3:
